@@ -101,6 +101,38 @@ export const searchSchedules = (userId: string, query: string): Schedule[] => {
   );
 };
 
+// 특정 날짜의 일정 조회하기 (사용자별)
+export const getSchedulesByDate = (userId: string, targetDate: Date): Schedule[] => {
+  const schedules = getSchedules(userId);
+  const targetDateStr = targetDate.toDateString(); // YYYY-MM-DD 형식
+  
+  return schedules.filter(schedule => {
+    const scheduleDate = new Date(schedule.startDate);
+    return scheduleDate.toDateString() === targetDateStr;
+  });
+};
+
+// 특정 주의 일정 조회하기 (사용자별)
+export const getSchedulesByWeek = (userId: string, weekOffset: number): Schedule[] => {
+  const schedules = getSchedules(userId);
+  const now = new Date();
+  const currentWeekStart = new Date(now);
+  currentWeekStart.setDate(now.getDate() - now.getDay()); // 이번 주 일요일
+  currentWeekStart.setHours(0, 0, 0, 0);
+  
+  const targetWeekStart = new Date(currentWeekStart);
+  targetWeekStart.setDate(currentWeekStart.getDate() + (weekOffset * 7));
+  
+  const targetWeekEnd = new Date(targetWeekStart);
+  targetWeekEnd.setDate(targetWeekStart.getDate() + 6);
+  targetWeekEnd.setHours(23, 59, 59, 999);
+  
+  return schedules.filter(schedule => {
+    const scheduleDate = new Date(schedule.startDate);
+    return scheduleDate >= targetWeekStart && scheduleDate <= targetWeekEnd;
+  });
+};
+
 // 사용자별 일정 데이터 초기화 (새 사용자 생성 시)
 export const initializeUserSchedules = (userId: string): void => {
   if (typeof window === 'undefined') return;

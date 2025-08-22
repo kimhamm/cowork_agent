@@ -21,6 +21,9 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   timestamp: Date;
   scheduleId?: string;
+  requiresMoreInfo?: boolean;
+  missingFields?: string[];
+  suggestions?: string[];
 }
 
 export interface MCPTool {
@@ -36,4 +39,22 @@ export interface MCPTool {
 export interface MCPRequest {
   tool: string;
   arguments: Record<string, any>;
+}
+
+export interface MCPResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+  requiresMoreInfo?: boolean;
+  missingFields?: string[];
+  suggestions?: string[];
+}
+
+export interface ScheduleCreationRequest {
+  title?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  isComplete: boolean;
+  missingFields: string[];
 }
